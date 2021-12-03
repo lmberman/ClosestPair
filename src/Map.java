@@ -32,13 +32,13 @@ public class Map {
             case 'F':
             case 'f':
                 for (int i = 1; i <= numberOfElements; i++) {
-                    floatingPointVertices.add(new FloatingPointVertex(rand.nextFloat(), rand.nextFloat(), rand.nextFloat()));
+                    floatingPointVertices.add(new FloatingPointVertex(rand.nextFloat(), rand.nextFloat()));
                 }
                 break;
             case 'I':
             case 'i':
                 for (int i = 1; i <= numberOfElements; i++) {
-                    integerVertices.add(new IntegerVertex(rand.nextInt(10), rand.nextInt(10), rand.nextInt(10)));
+                    integerVertices.add(new IntegerVertex(rand.nextInt(10), rand.nextInt(10)));
                 }
                 break;
             default:
@@ -46,7 +46,7 @@ public class Map {
         }
         // Sort the Map along the x axis
         sortAlongXAxis();
-        printAllElements();
+        //printAllElements();
     }
 
     /**
@@ -71,8 +71,8 @@ public class Map {
         } else {
             floatingPointVertices.sort(Comparator.comparing(vertex -> vertex.getX()));
         }
-        System.out.println("Elements Sorted:");
-        printAllElements();
+        //System.out.println("Elements Sorted:");
+//        printAllElements();
     }
 
     public void printAllElements() {
@@ -109,7 +109,7 @@ public class Map {
                     } else {
                         distance = floatingPointVertices.get(i).distanceFrom(floatingPointVertices.get(j));
                     }
-                    System.out.println("Found Distance: " + distance);
+                    //System.out.println("Found Distance: " + distance);
                     if (distance < smallestDistance) {
                         smallestDistance = distance;
                     }
@@ -160,22 +160,22 @@ public class Map {
      * @return minimum distance within the array/subarray
      */
     public double findMinimumDistanceRecursive(int start, int end) {
-        System.out.println("Finding the Minimum Distance between elements at index " + start + " and index " + end);
-        printElements(start, end);
+        //System.out.println("Finding the Minimum Distance between elements at index " + start + " and index " + end);
+//        printElements(start, end);
         // recursive function divide array and sub-arrays in half until no more than 3 elements remain
         // check distance between neighboring points and get the min value
         if (end - start <= 3) {
-            System.out.println("List has a size of 3 elements or less Using Brute Force Approach to find smallest distance");
+            //System.out.println("List has a size of 3 elements or less Using Brute Force Approach to find smallest distance");
             // compare the remaining 2,3 elements and return smallest distance
             return findMinimumDistanceBrute(start, end);
         }
         int mid = (start + end) / 2;
-        System.out.println("To The Left");
+        //System.out.println("To The Left");
         double leftDistance = findMinimumDistanceRecursive(start, mid);
-        System.out.print("SdL: " + leftDistance);
-        System.out.println("To The Right");
+        //System.out.print("SdL: " + leftDistance);
+        //System.out.println("To The Right");
         double rightDistance = findMinimumDistanceRecursive(mid, end);
-        System.out.print("SdR distance:" + rightDistance);
+        //System.out.print("SdR distance:" + rightDistance);
         // return the smallest of the two
         // need to get the points for these smallest values
         comparisonCount++;
