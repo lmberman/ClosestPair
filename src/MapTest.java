@@ -5,133 +5,170 @@ import java.time.Instant;
 
 public class MapTest {
 
+    Instant start;
+    Instant end;
+    Map intMap;
+    Map floatMap;
+    long intTimeElapsed;
+    int intComparisons;
+    long floatTimeElapsed;
+    int floatComparisons;
+
     @Test
-    public void testMapRunTimesOfDifferentSizes(){
-        Instant start = Instant.now();
-        Map map = new Map(3, 'I');
-        map.findMinimumDistance();
-        Instant end = Instant.now();
-
-        long timeElapsedForThreeInt = Duration.between(start, end).toMillis();
-        int comparisonsForThreeInt = map.getComparisonCount();
+    public void testMapSize3() {
+        intMap = new Map(3, 'I');
+        floatMap = new Map(3,'F');
 
         start = Instant.now();
-        map = new Map(3, 'F');
-        map.findMinimumDistance();
+        intMap.findMinimumDistance();
         end = Instant.now();
 
-        long timeElapsedForThreeFloat = Duration.between(start, end).toMillis();
-        int comparisonsForThreeFloat = map.getComparisonCount();
+        intTimeElapsed = Duration.between(start, end).toMillis();
+        intComparisons = intMap.getComparisonCount();
 
         start = Instant.now();
-        map = new Map(8,'I');
-        map.findMinimumDistance();
+        floatMap.findMinimumDistance();
         end = Instant.now();
-        long timeElapsedForEightInt = Duration.between(start, end).toMillis();
-        int comparisonsForEightInt = map.getComparisonCount();
+
+        floatTimeElapsed = Duration.between(start, end).toMillis();
+        floatComparisons = floatMap.getComparisonCount();
+
+        assert(intComparisons == floatComparisons);
+
+        System.out.println("Time elapsed to solve list of size 3 using Integers: " + intTimeElapsed + " milliseconds");
+        System.out.println("Num of comparisons to solve list of size 3 using Integers: " + intComparisons);
+
+        System.out.println("Time elapsed to solve list of size 3 using Floats: " + floatTimeElapsed + " milliseconds");
+        System.out.println("Num of comparisons to solve list of size 3 using Floats: " + floatComparisons);
+    }
+
+    @Test
+    public void testMapSize8() {
+        intMap = new Map(8, 'I');
+        floatMap = new Map(8,'F');
 
         start = Instant.now();
-        map = new Map(8,'F');
-        map.findMinimumDistance();
+        intMap.findMinimumDistance();
         end = Instant.now();
-        long timeElapsedForEightFloat = Duration.between(start, end).toMillis();
-        int comparisonsForEightFloat = map.getComparisonCount();
+
+        intTimeElapsed = Duration.between(start, end).toMillis();
+        intComparisons = intMap.getComparisonCount();
 
         start = Instant.now();
-        map = new Map(200, 'I');
-        map.findMinimumDistance();
+        floatMap.findMinimumDistance();
         end = Instant.now();
-        long timeElapsedForTwoHundInt = Duration.between(start, end).toMillis();
-        int comparisonsForTwoHundInt = map.getComparisonCount();
+
+        floatTimeElapsed = Duration.between(start, end).toMillis();
+        floatComparisons = floatMap.getComparisonCount();
+
+        System.out.println("Time elapsed to solve list of size 8 using Integers: " + intTimeElapsed + " milliseconds");
+        System.out.println("Num of comparisons to solve list of size 8 using Integers: " + intComparisons);
+
+        System.out.println("Time elapsed to solve list of size 8 using Floats: " + floatTimeElapsed + " milliseconds");
+        System.out.println("Num of comparisons to solve list of size 8 using Floats: " + floatComparisons);
+    }
+
+    @Test
+    public void testMapSize200() {
+        intMap = new Map(200, 'I');
+        floatMap = new Map(200,'F');
 
         start = Instant.now();
-        map = new Map(200, 'F');
-        map.findMinimumDistance();
+        intMap.findMinimumDistance();
         end = Instant.now();
-        long timeElapsedForTwoHundFloat = Duration.between(start, end).toMillis();
-        int comparisonsForTwoHundFloat = map.getComparisonCount();
+
+        intTimeElapsed = Duration.between(start, end).toMillis();
+        intComparisons = intMap.getComparisonCount();
 
         start = Instant.now();
-        map = new Map(256, 'I');
-        map.findMinimumDistance();
+        floatMap.findMinimumDistance();
         end = Instant.now();
-        long timeElapsedForTwoHundFiveInt = Duration.between(start, end).toMillis();
-        int comparisonsForTwoHundFiveInt = map.getComparisonCount();
+
+        floatTimeElapsed = Duration.between(start, end).toMillis();
+        floatComparisons = floatMap.getComparisonCount();
+
+        System.out.println("Time elapsed to solve list of size 200 using Integers: " + intTimeElapsed + " milliseconds");
+        System.out.println("Num of comparisons to solve list of size 200 using Integers: " + intComparisons);
+
+        System.out.println("Time elapsed to solve list of size 200 using Floats: " + floatTimeElapsed + " milliseconds");
+        System.out.println("Num of comparisons to solve list of size 200 using Floats: " + floatComparisons);
+    }
+
+    @Test
+    public void testMapSize200Brute() {
+        intMap = new Map(200, 'I');
+        floatMap = new Map(200,'F');
 
         start = Instant.now();
-        map = new Map(256, 'F');
-        map.findMinimumDistance();
+        intMap.findMinimumDistanceBrute(0, intMap.getSize());
         end = Instant.now();
-        long timeElapsedForTwoHundFiveFloat = Duration.between(start, end).toMillis();
-        int comparisonsForTwoHundFiveFloat = map.getComparisonCount();
+
+        intTimeElapsed = Duration.between(start, end).toMillis();
+        intComparisons = intMap.getComparisonCount();
 
         start = Instant.now();
-        map = new Map(200, 'I');
-        map.findMinimumDistanceBrute(0,map.getSize());
+        floatMap.findMinimumDistanceBrute(0, floatMap.getSize());
         end = Instant.now();
-        long timeElapsedForTwoHundBrute = Duration.between(start, end).toMillis();
-        int comparisonsForTwoHundBrute = map.getComparisonCount();
+
+        floatTimeElapsed = Duration.between(start, end).toMillis();
+        floatComparisons = floatMap.getComparisonCount();
+
+        System.out.println("Brute Force : Time elapsed to solve list of size 200 using Integers: " + intTimeElapsed + " milliseconds");
+        System.out.println("Brute Force : Num of comparisons to solve list of size 200 using Integers: " + intComparisons);
+
+        System.out.println("Brute Force : Time elapsed to solve list of size 200 using Floats: " + floatTimeElapsed + " milliseconds");
+        System.out.println("Brute Force : Num of comparisons to solve list of size 200 using Floats: " + floatComparisons);
+    }
+
+    @Test
+    public void testMapSize256() {
+        intMap = new Map(256, 'I');
+        floatMap = new Map(256,'F');
 
         start = Instant.now();
-        map = new Map(200, 'F');
-        map.findMinimumDistanceBrute(0,map.getSize());
+        intMap.findMinimumDistance();
         end = Instant.now();
-        long timeElapsedForTwoHundBruteFloat = Duration.between(start, end).toMillis();
-        int comparisonsForTwoHundBruteFloat = map.getComparisonCount();
+
+        intTimeElapsed = Duration.between(start, end).toMillis();
+        intComparisons = intMap.getComparisonCount();
 
         start = Instant.now();
-        map = new Map(256, 'I');
-        map.findMinimumDistanceBrute(0, map.getSize());
+        floatMap.findMinimumDistance();
         end = Instant.now();
-        long timeElapsedForTwoHundFiveBrute = Duration.between(start, end).toMillis();
-        int comparisonsForTwoHundFiveBrute = map.getComparisonCount();
+
+        floatTimeElapsed = Duration.between(start, end).toMillis();
+        floatComparisons = floatMap.getComparisonCount();
+
+        System.out.println("Time elapsed to solve list of size 256 using Integers: " + intTimeElapsed + " milliseconds");
+        System.out.println("Num of comparisons to solve list of size 256 using Integers: " + intComparisons);
+
+        System.out.println("Time elapsed to solve list of size 256 using Floats: " + floatTimeElapsed + " milliseconds");
+        System.out.println("Num of comparisons to solve list of size 256 using Floats: " + floatComparisons);
+    }
+
+    @Test
+    public void testMapSize256Brute() {
+        intMap = new Map(256, 'I');
+        floatMap = new Map(256,'F');
 
         start = Instant.now();
-        map = new Map(256, 'F');
-        map.findMinimumDistanceBrute(0, map.getSize());
+        intMap.findMinimumDistanceBrute(0, intMap.getSize());
         end = Instant.now();
-        long timeElapsedForTwoHundFiveBruteFloat = Duration.between(start, end).toMillis();
-        int comparisonsForTwoHundFiveBruteFloat = map.getComparisonCount();
 
-//        assert(timeElapsedForThreeFloat < timeElapsedForTwoHundFloat && timeElapsedForThreeFloat > timeElapsedForEightFloat);
-//        assert(timeElapsedForEightFloat < timeElapsedForThreeInt && timeElapsedForEightFloat < timeElapsedForTwoHundFloat); // 8 is the smallest
-//        assert(timeElapsedForTwoHundFiveFloat > timeElapsedForEightFloat && timeElapsedForTwoHundFiveFloat < timeElapsedForTwoHundFloat); // greater than 8 but less than 200 time due to evenly distributed tree
+        intTimeElapsed = Duration.between(start, end).toMillis();
+        intComparisons = intMap.getComparisonCount();
 
+        start = Instant.now();
+        floatMap.findMinimumDistanceBrute(0, floatMap.getSize());
+        end = Instant.now();
 
-        System.out.println("Time elapsed to solve list of size 3 using Integers: " + timeElapsedForThreeInt + " milliseconds");
-        System.out.println("Num of comparisons to solve list of size 3 using Integers: " + comparisonsForThreeInt);
+        floatTimeElapsed = Duration.between(start, end).toMillis();
+        floatComparisons = floatMap.getComparisonCount();
 
-        System.out.println("Time elapsed to solve list of size 3 using Floats: " + timeElapsedForThreeFloat + " milliseconds");
-        System.out.println("Num of comparisons to solve list of size 3 using Floats: " + comparisonsForThreeFloat);
+        System.out.println("Brute Force: Time elapsed to solve list of size 256 using Integers: " + intTimeElapsed + " milliseconds");
+        System.out.println("Brute Force: Num of comparisons to solve list of size 256 using Integers: " + intComparisons);
 
-        System.out.println("Time elapsed to solve list of size 8 using Integers: " + timeElapsedForEightInt + " milliseconds");
-        System.out.println("Num of comparisons to solve list of size 8 using Integers: " + comparisonsForEightInt);
-
-        System.out.println("Time elapsed to solve list of size 8 using Floats: " + timeElapsedForEightFloat + " milliseconds");
-        System.out.println("Num of comparisons to solve list of size 8 using Floats: " + comparisonsForEightFloat);
-
-        System.out.println("Time elapsed to solve list of size 200 using Integers: " + timeElapsedForTwoHundInt + " milliseconds");
-        System.out.println("Num of comparisons to solve list of size 200 using Integers: " + comparisonsForTwoHundInt);
-
-        System.out.println("Time elapsed to solve list of size 200 using Floats: " + timeElapsedForTwoHundFloat + " milliseconds");
-        System.out.println("Num of comparisons to solve list of size 200 using Floats: " + comparisonsForTwoHundFloat);
-
-        System.out.println("Time elapsed to solve list of size 200 using Integers brute force: " + timeElapsedForTwoHundBrute + " milliseconds");
-        System.out.println("Num of comparisons to solve list of size 200 using Integers brute force: " + comparisonsForTwoHundBrute);
-
-        System.out.println("Time elapsed to solve list of size 200 using Floats brute force: " + timeElapsedForTwoHundBruteFloat + " milliseconds");
-        System.out.println("Num of comparisons to solve list of size 200 using Floats brute force: " + comparisonsForTwoHundBruteFloat);
-
-        System.out.println("Time elapsed to solve list of size 256 using Integers: " + timeElapsedForTwoHundFiveInt + " milliseconds");
-        System.out.println("Num of comparisons to solve list of size 256 using Integers: " + comparisonsForTwoHundFiveInt);
-
-        System.out.println("Time elapsed to solve list of size 256 using Floats: " + timeElapsedForTwoHundFiveFloat + " milliseconds");
-        System.out.println("Num of comparisons to solve list of size 256 using Floats: " + comparisonsForTwoHundFiveFloat);
-
-        System.out.println("Time elapsed to solve list of size 256 using Integers brute force: " + timeElapsedForTwoHundFiveBrute + " milliseconds");
-        System.out.println("Num of comparisons to solve list of size 256 using Integers brute force: " + comparisonsForTwoHundFiveBrute);
-
-        System.out.println("Time elapsed to solve list of size 256 using Floats brute force: " + timeElapsedForTwoHundFiveBruteFloat + " milliseconds");
-        System.out.println("Num of comparisons to solve list of size 256 using Float brute force: " + comparisonsForTwoHundFiveBruteFloat);
+        System.out.println("Brute Force: Time elapsed to solve list of size 256 using Floats: " + floatTimeElapsed + " milliseconds");
+        System.out.println("Brute Force: Num of comparisons to solve list of size 256 using Floats: " + floatComparisons);
     }
 }

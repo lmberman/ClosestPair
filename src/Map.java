@@ -14,6 +14,8 @@ public class Map {
     private int comparisonCount;
     private ArrayList<FloatingPointVertex> floatingPointVertices;
     private ArrayList<IntegerVertex> integerVertices;
+    private ArrayList<FloatingPointVertex> floatingPointStrip;
+    private ArrayList<IntegerVertex> integerStrip;
 
     /**
      * create a new map with randomized points in the 2D space
@@ -27,6 +29,8 @@ public class Map {
         size = numberOfElements;
         floatingPointVertices = new ArrayList<>();
         integerVertices = new ArrayList<>();
+        floatingPointStrip = new ArrayList<>();
+        integerStrip = new ArrayList<>();
         Random rand = new Random();
         switch (type) {
             case 'F':
@@ -50,33 +54,28 @@ public class Map {
     }
 
     /**
-     * Get size of map
-     *
-     * @return count of vertices in map
-     */
-    public int getSize() {
-        return size;
-    }
-
-    public int getComparisonCount(){
-        return comparisonCount;
-    }
-
-    /**
      * Sort the vertices along the x axis using built in array list mergesort
      */
     public void sortAlongXAxis() {
         if (floatingPointVertices.isEmpty()) {
-            integerVertices.sort(Comparator.comparing(vertex -> vertex.getX()));
+            integerVertices.sort(Comparator.comparing(IntegerVertex::getX));
         } else {
-            floatingPointVertices.sort(Comparator.comparing(vertex -> vertex.getX()));
+            floatingPointVertices.sort(Comparator.comparing(FloatingPointVertex::getX));
         }
-        //System.out.println("Elements Sorted:");
-//        printAllElements();
+        // System.out.println("Elements Sorted:");
+        //printAllElements();
     }
 
     public void printAllElements() {
         printElements(0, size);
+    }
+
+    public int getComparisonCount() {
+        return comparisonCount;
+    }
+
+    public int getSize() {
+        return size;
     }
 
     public void printElements(int start, int end) {
@@ -100,16 +99,16 @@ public class Map {
     public double findMinimumDistanceBrute(int start, int end) {
         double smallestDistance = 1000;
         for (int i = start; i < end; i++) {
-            for (int j = start; j < end; j++) {
+            for (int j = start+1; j < end; j++) {
                 if (i != j) {
                     double distance;
-                    comparisonCount++;
-                    if(floatingPointVertices.isEmpty()){
+                    if (floatingPointVertices.isEmpty()) {
                         distance = integerVertices.get(i).distanceFrom(integerVertices.get(j));
                     } else {
                         distance = floatingPointVertices.get(i).distanceFrom(floatingPointVertices.get(j));
                     }
                     //System.out.println("Found Distance: " + distance);
+                    comparisonCount++;
                     if (distance < smallestDistance) {
                         smallestDistance = distance;
                     }
@@ -120,34 +119,94 @@ public class Map {
     }
 
     /**
-     * Finds the smallest distance between the points within the map using the recursive function to find SdL and SdR and another double for loop
-     * to check the remaining element's distances
+     * A utility function to find the
+     * distance between the closest points of
+     * strip of given size. All points in
+     * strip[] are sorted according to
+     * y coordinate. They all have an upper
+     * bound on minimum distance as d.
+     * Note that this method seems to be
+     * a O(n^2) method, but it's a O(n)
+     * method as the inner loop runs at most 6 times
+     **/
+    private double stripClosestFloatingPoint(double d) {
+        double min = d; // Initialize the minimum distance as d
+
+        // sort along the Y axis
+        floatingPointStrip.sort(Comparator.comparing(FloatingPointVertex::getY));
+
+        // Pick all points one by one and try the next points till the difference
+        // between y coordinates is smaller than d.
+        // This is a proven fact that this loop runs at most 6 times
+        for (int i = 0; i < floatingPointStrip.size(); ++i) {
+            for (int j = i + 1; (j < floatingPointStrip.size() &&
+                    (floatingPointStrip.get(j).getY() - floatingPointStrip.get(i).getY()) < min); j++) {
+                comparisonCount++;
+                if (floatingPointStrip.get(i).distanceFrom(floatingPointStrip.get(j)) < min)
+                    min = floatingPointStrip.get(i).distanceFrom(floatingPointStrip.get(j));
+            }
+        }
+
+        return min;
+    }
+
+    private double stripClosestIntegerPoint(double d) {
+        double min = d; // Initialize the minimum distance as d
+
+        // sort along the Y axis
+        integerStrip.sort(Comparator.comparing(IntegerVertex::getY));
+
+        // Pick all points one by one and try the next points till the difference
+        // between y coordinates is smaller than d.
+        // This is a proven fact that this loop runs at most 6 times
+        for (int i = 0; i < integerStrip.size(); ++i) {
+            for (int j = i + 1; (j < integerStrip.size() &&
+                    (integerStrip.get(j).getY() - integerStrip.get(i).getY()) < min); j++) {
+                comparisonCount++;
+                if (integerStrip.get(i).distanceFrom(integerStrip.get(j)) < min)
+                    min = integerStrip.get(i).distanceFrom(integerStrip.get(j));
+            }
+        }
+
+        return min;
+    }
+
+    /**
+     * Build Integer Strip of all points within the provided distance of the midPointX along the x axis
+     *
+     * @param midPointX the x coordinate of the mid point
+     * @param distance  the provided distance
+     */
+    private void buildIntegerStrip(int midPointX, double distance) {
+        for (IntegerVertex vertex : integerVertices) {
+            comparisonCount++;
+            if (Math.abs(vertex.getX() - midPointX) < distance)
+                integerStrip.add(vertex);
+        }
+    }
+
+    /**
+     * Build Floating Point Strip of all points within the provided distance of the midPointX along the x axis
+     *
+     * @param midPointX the x coordinate of the mid point
+     * @param distance  the provided distance
+     */
+    private void buildFloatingPointStrip(float midPointX, double distance) {
+        for (FloatingPointVertex vertex : floatingPointVertices) {
+            comparisonCount++;
+            if (Math.abs(vertex.getX() - midPointX) < distance)
+                floatingPointStrip.add(vertex);
+        }
+    }
+
+    /**
+     * Finds the smallest distance between the points within the map using the recursive function
+     * for the entire array
      *
      * @return smallest distance between points
      */
     public double findMinimumDistance() {
-        double minimumGroupDistance = findMinimumDistanceRecursive(0, size);
-        // Find Minimum Distance dLR among vertex pairs where one point is on left side of divide
-        // and the other is to the right of the divide
-        // this can be done by taking the minimum distance between all points to the left of the divide and the points to the right of the divide (median)
-        double minimumPairDistance = 10000;
-        int mid = size / 2;
-        for (int leftIndex = mid - 1; leftIndex >= 0; leftIndex--) {
-            for (int rightIndex = mid; rightIndex < size; rightIndex++) {
-                double distance;
-                comparisonCount++;
-                if(floatingPointVertices.isEmpty()){
-                    distance = integerVertices.get(leftIndex).distanceFrom(integerVertices.get(rightIndex));
-                } else {
-                    distance = floatingPointVertices.get(leftIndex).distanceFrom(floatingPointVertices.get(rightIndex));
-                }
-                if (distance < minimumPairDistance) {
-                    minimumPairDistance = distance;
-                }
-            }
-        }
-        // Answer is the minimum between dL,dR, and dLR
-        return minimumGroupDistance < minimumPairDistance ? minimumGroupDistance : minimumPairDistance;
+        return findMinimumDistanceRecursive(0, size);
     }
 
     /**
@@ -155,9 +214,9 @@ public class Map {
      * Distance between each neighboring elements in their sections (powers of 2) are then found and compared with the smallest distance of other pairs
      * The minimum distance is then returned for the final answer of minimum distance between groups
      *
-     * @param start beginning of array/ subarray
-     * @param end   end of array/subarray
-     * @return minimum distance within the array/subarray
+     * @param start beginning of array/ sub_array
+     * @param end   end of array/sub_array
+     * @return minimum distance within the array/sub_array
      */
     public double findMinimumDistanceRecursive(int start, int end) {
         //System.out.println("Finding the Minimum Distance between elements at index " + start + " and index " + end);
@@ -175,10 +234,19 @@ public class Map {
         //System.out.print("SdL: " + leftDistance);
         //System.out.println("To The Right");
         double rightDistance = findMinimumDistanceRecursive(mid, end);
+        double minSubDistance = Math.min(leftDistance,rightDistance);
+        // Build an array strip that contains points closer than minDistance to lin
         //System.out.print("SdR distance:" + rightDistance);
         // return the smallest of the two
         // need to get the points for these smallest values
-        comparisonCount++;
-        return leftDistance < rightDistance ? leftDistance : rightDistance;
+        double stripMinDistance;
+        if (floatingPointVertices.isEmpty()) {
+            buildIntegerStrip(integerVertices.get(mid).getX(), minSubDistance);
+            stripMinDistance = stripClosestIntegerPoint(minSubDistance);
+        } else {
+            buildFloatingPointStrip(floatingPointVertices.get(mid).getX(), minSubDistance);
+            stripMinDistance = stripClosestFloatingPoint(minSubDistance);
+        }
+        return Math.min(minSubDistance,stripMinDistance);
     }
 }
