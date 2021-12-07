@@ -171,4 +171,56 @@ public class MapTest {
         System.out.println("Brute Force: Time elapsed to solve list of size 256 using Floats: " + floatTimeElapsed + " milliseconds");
         System.out.println("Brute Force: Num of comparisons to solve list of size 256 using Floats: " + floatComparisons);
     }
+
+    @Test
+    public void testMapSize1000() {
+        intMap = new Map(1000, 'I');
+        floatMap = new Map(1000,'F');
+
+        start = Instant.now();
+        intMap.findMinimumDistance();
+        end = Instant.now();
+
+        intTimeElapsed = Duration.between(start, end).toMillis();
+        intComparisons = intMap.getComparisonCount();
+
+        start = Instant.now();
+        floatMap.findMinimumDistance();
+        end = Instant.now();
+
+        floatTimeElapsed = Duration.between(start, end).toMillis();
+        floatComparisons = floatMap.getComparisonCount();
+
+        System.out.println("Time elapsed to solve list of size 1000 using Integers: " + intTimeElapsed + " milliseconds");
+        System.out.println("Num of comparisons to solve list of size 1000 using Integers: " + intComparisons);
+
+        System.out.println("Time elapsed to solve list of size 1000 using Floats: " + floatTimeElapsed + " milliseconds");
+        System.out.println("Num of comparisons to solve list of size 1000 using Floats: " + floatComparisons);
+    }
+
+    @Test
+    public void testMapSize1000Brute() {
+        intMap = new Map(1000, 'I');
+        floatMap = new Map(1000,'F');
+
+        start = Instant.now();
+        intMap.findMinimumDistanceBrute(0, intMap.getSize());
+        end = Instant.now();
+
+        intTimeElapsed = Duration.between(start, end).toMillis();
+        intComparisons = intMap.getComparisonCount();
+
+        start = Instant.now();
+        floatMap.findMinimumDistanceBrute(0, floatMap.getSize());
+        end = Instant.now();
+
+        floatTimeElapsed = Duration.between(start, end).toMillis();
+        floatComparisons = floatMap.getComparisonCount();
+
+        System.out.println("Brute Force: Time elapsed to solve list of size 1000 using Integers: " + intTimeElapsed + " milliseconds");
+        System.out.println("Brute Force: Num of comparisons to solve list of size 1000 using Integers: " + intComparisons);
+
+        System.out.println("Brute Force: Time elapsed to solve list of size 1000 using Floats: " + floatTimeElapsed + " milliseconds");
+        System.out.println("Brute Force: Num of comparisons to solve list of size 1000 using Floats: " + floatComparisons);
+    }
 }

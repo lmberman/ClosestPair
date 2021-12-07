@@ -156,9 +156,11 @@ public class Map {
         for (int i = 0; i < floatingPointStrip.size(); ++i) {
             for (int j = i + 1; (j < floatingPointStrip.size() &&
                     (floatingPointStrip.get(j).getY() - floatingPointStrip.get(i).getY()) < min); j++) {
-                comparisonCount++;
-                if (floatingPointStrip.get(i).distanceFrom(floatingPointStrip.get(j)) < min)
+                if (floatingPointStrip.get(i).distanceFrom(floatingPointStrip.get(j)) < min) {
+                    comparisonCount++;
                     min = floatingPointStrip.get(i).distanceFrom(floatingPointStrip.get(j));
+                }
+
             }
         }
 
@@ -174,9 +176,11 @@ public class Map {
         for (int i = 0; i < integerStrip.size(); ++i) {
             for (int j = i + 1; (j < integerStrip.size() &&
                     (integerStrip.get(j).getY() - integerStrip.get(i).getY()) < min); j++) {
-                comparisonCount++;
-                if (integerStrip.get(i).distanceFrom(integerStrip.get(j)) < min)
+                if (integerStrip.get(i).distanceFrom(integerStrip.get(j)) < min) {
+                    comparisonCount++;
                     min = integerStrip.get(i).distanceFrom(integerStrip.get(j));
+                }
+
             }
         }
 
@@ -192,8 +196,7 @@ public class Map {
     private void buildIntegerStrip(int midPointX, double distance) {
         integerStrip = new ArrayList<>();
         for (IntegerVertex vertex : integerVerticesY) {
-            comparisonCount++;
-            if (vertex.getX() >= (midPointX + (int) distance) && vertex.getX() <= (midPointX + (int) distance))
+            if (vertex.getX() >= (midPointX - (int)distance) && vertex.getX() <= (midPointX + (int)distance))
                 integerStrip.add(vertex);
         }
     }
@@ -207,9 +210,9 @@ public class Map {
     private void buildFloatingPointStrip(float midPointX, double distance) {
         floatingPointStrip = new ArrayList<>();
         for (FloatingPointVertex vertex : floatingPointVerticesY) {
-            comparisonCount++;
-            if (vertex.getX() >= (midPointX + (float) distance) && vertex.getX() <= (midPointX + (float) distance))
+            if (vertex.getX() >= (float)(midPointX - distance) && vertex.getX() <= (float)(midPointX + distance)) {
                 floatingPointStrip.add(vertex);
+            }
         }
     }
 
@@ -249,6 +252,7 @@ public class Map {
         //System.out.println("To The Right");
         double rightDistance = findMinimumDistanceRecursive(mid, end);
         double minSubDistance = Math.min(leftDistance,rightDistance);
+        comparisonCount++;
         // Build an array strip that contains points closer than minDistance to lin
         //System.out.print("SdR distance:" + rightDistance);
         // return the smallest of the two
