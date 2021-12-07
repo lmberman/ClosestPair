@@ -12,8 +12,10 @@ import java.util.Random;
 public class Map {
     private int size;
     private int comparisonCount;
-    private ArrayList<FloatingPointVertex> floatingPointVertices;
-    private ArrayList<IntegerVertex> integerVertices;
+    private ArrayList<FloatingPointVertex> floatingPointVerticesX;
+    private ArrayList<IntegerVertex> integerVerticesX;
+    private ArrayList<FloatingPointVertex> floatingPointVerticesY;
+    private ArrayList<IntegerVertex> integerVerticesY;
     private ArrayList<FloatingPointVertex> floatingPointStrip;
     private ArrayList<IntegerVertex> integerStrip;
 
@@ -27,8 +29,10 @@ public class Map {
     Map(int numberOfElements, char type) {
         comparisonCount = 0;
         size = numberOfElements;
-        floatingPointVertices = new ArrayList<>();
-        integerVertices = new ArrayList<>();
+        floatingPointVerticesX = new ArrayList<>();
+        integerVerticesX = new ArrayList<>();
+        floatingPointVerticesY = new ArrayList<>();
+        integerVerticesY = new ArrayList<>();
         floatingPointStrip = new ArrayList<>();
         integerStrip = new ArrayList<>();
         Random rand = new Random();
@@ -36,13 +40,15 @@ public class Map {
             case 'F':
             case 'f':
                 for (int i = 1; i <= numberOfElements; i++) {
-                    floatingPointVertices.add(new FloatingPointVertex(rand.nextFloat(), rand.nextFloat()));
+                    floatingPointVerticesX.add(new FloatingPointVertex(rand.nextFloat(), rand.nextFloat()));
+                    floatingPointVerticesY.add(floatingPointVerticesX.get(i-1));
                 }
                 break;
             case 'I':
             case 'i':
                 for (int i = 1; i <= numberOfElements; i++) {
-                    integerVertices.add(new IntegerVertex(rand.nextInt(10), rand.nextInt(10)));
+                    integerVerticesX.add(new IntegerVertex(rand.nextInt(10), rand.nextInt(10)));
+                    integerVerticesY.add(integerVerticesX.get(i-1));
                 }
                 break;
             default:
@@ -50,6 +56,7 @@ public class Map {
         }
         // Sort the Map along the x axis
         sortAlongXAxis();
+        sortAlongYAxis();
         //printAllElements();
     }
 
@@ -57,13 +64,21 @@ public class Map {
      * Sort the vertices along the x axis using built in array list mergesort
      */
     public void sortAlongXAxis() {
-        if (floatingPointVertices.isEmpty()) {
-            integerVertices.sort(Comparator.comparing(IntegerVertex::getX));
+        if (floatingPointVerticesX.isEmpty()) {
+            integerVerticesX.sort(Comparator.comparing(IntegerVertex::getX));
         } else {
-            floatingPointVertices.sort(Comparator.comparing(FloatingPointVertex::getX));
+            floatingPointVerticesX.sort(Comparator.comparing(FloatingPointVertex::getX));
         }
         // System.out.println("Elements Sorted:");
         //printAllElements();
+    }
+
+    public void sortAlongYAxis() {
+        if (floatingPointVerticesY.isEmpty()) {
+            integerVerticesY.sort(Comparator.comparing(IntegerVertex::getY));
+        } else {
+            floatingPointVerticesY.sort(Comparator.comparing(FloatingPointVertex::getY));
+        }
     }
 
     public void printAllElements() {
@@ -81,7 +96,7 @@ public class Map {
     public void printElements(int start, int end) {
         System.out.print("S = {");
         for (int i = start; i < end; i++) {
-            System.out.print(floatingPointVertices.isEmpty() ? integerVertices.get(i) : floatingPointVertices.get(i));
+            System.out.print(floatingPointVerticesX.isEmpty() ? integerVerticesX.get(i) : floatingPointVerticesX.get(i));
             if (i + 1 != end) {
                 System.out.print(',');
             }
@@ -102,10 +117,10 @@ public class Map {
             for (int j = start+1; j < end; j++) {
                 if (i != j) {
                     double distance;
-                    if (floatingPointVertices.isEmpty()) {
-                        distance = integerVertices.get(i).distanceFrom(integerVertices.get(j));
+                    if (floatingPointVerticesX.isEmpty()) {
+                        distance = integerVerticesX.get(i).distanceFrom(integerVerticesX.get(j));
                     } else {
-                        distance = floatingPointVertices.get(i).distanceFrom(floatingPointVertices.get(j));
+                        distance = floatingPointVerticesX.get(i).distanceFrom(floatingPointVerticesX.get(j));
                     }
                     //System.out.println("Found Distance: " + distance);
                     comparisonCount++;
@@ -153,9 +168,6 @@ public class Map {
     private double stripClosestIntegerPoint(double d) {
         double min = d; // Initialize the minimum distance as d
 
-        // sort along the Y axis
-        integerStrip.sort(Comparator.comparing(IntegerVertex::getY));
-
         // Pick all points one by one and try the next points till the difference
         // between y coordinates is smaller than d.
         // This is a proven fact that this loop runs at most 6 times
@@ -178,9 +190,10 @@ public class Map {
      * @param distance  the provided distance
      */
     private void buildIntegerStrip(int midPointX, double distance) {
-        for (IntegerVertex vertex : integerVertices) {
+        integerStrip = new ArrayList<>();
+        for (IntegerVertex vertex : integerVerticesY) {
             comparisonCount++;
-            if (Math.abs(vertex.getX() - midPointX) < distance)
+            if (vertex.getX() >= (midPointX + (int) distance) && vertex.getX() <= (midPointX + (int) distance))
                 integerStrip.add(vertex);
         }
     }
@@ -192,9 +205,10 @@ public class Map {
      * @param distance  the provided distance
      */
     private void buildFloatingPointStrip(float midPointX, double distance) {
-        for (FloatingPointVertex vertex : floatingPointVertices) {
+        floatingPointStrip = new ArrayList<>();
+        for (FloatingPointVertex vertex : floatingPointVerticesY) {
             comparisonCount++;
-            if (Math.abs(vertex.getX() - midPointX) < distance)
+            if (vertex.getX() >= (midPointX + (float) distance) && vertex.getX() <= (midPointX + (float) distance))
                 floatingPointStrip.add(vertex);
         }
     }
@@ -240,11 +254,11 @@ public class Map {
         // return the smallest of the two
         // need to get the points for these smallest values
         double stripMinDistance;
-        if (floatingPointVertices.isEmpty()) {
-            buildIntegerStrip(integerVertices.get(mid).getX(), minSubDistance);
+        if (floatingPointVerticesX.isEmpty()) {
+            buildIntegerStrip(integerVerticesX.get(mid).getX(), minSubDistance);
             stripMinDistance = stripClosestIntegerPoint(minSubDistance);
         } else {
-            buildFloatingPointStrip(floatingPointVertices.get(mid).getX(), minSubDistance);
+            buildFloatingPointStrip(floatingPointVerticesX.get(mid).getX(), minSubDistance);
             stripMinDistance = stripClosestFloatingPoint(minSubDistance);
         }
         return Math.min(minSubDistance,stripMinDistance);
